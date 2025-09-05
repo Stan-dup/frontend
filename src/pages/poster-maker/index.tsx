@@ -180,6 +180,7 @@ const PosterMaker = () => {
             x: tf.position.xMin * result.resizeRatio,
             y: tf.position.yMin * result.resizeRatio,
             textContent: tf.textContent,
+            color: tf.color,
             fontSize: tf.fontSize * result.resizeRatio,
             fontFamily: tf.fontFamily,
           },
@@ -240,7 +241,7 @@ const PosterMaker = () => {
       </Card>
       <CanvasWrapper>
         <BackgroundImage
-          src={generatedPosterInfo.img}
+          src={URL.createObjectURL(generatedPosterInfo.img)}
           width={generatedPosterInfo.width * generatedPosterInfo.resizeRatio}
           height={generatedPosterInfo.height * generatedPosterInfo.resizeRatio}
         />

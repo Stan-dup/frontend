@@ -222,7 +222,9 @@ export const Home = () => {
               onChange={(e) => setPromptText(e.target.value)}
             />
             <div>
-              <UploadLabel>이미지 업로드</UploadLabel>
+              <UploadLabel>
+                이미지 업로드 <RequiredSpan>*필수</RequiredSpan>
+              </UploadLabel>
               {imagePreview ? (
                 <PreviewWrap>
                   <PreviewImg src={imagePreview} alt="upload preview" />
@@ -316,17 +318,18 @@ export const Home = () => {
             alt="illustration"
             style={{ maxWidth: "60%", height: "auto" }}
           />
-          {storeInfo && industry && (
-            <CreatePosterButton onClick={handleCreatePoster}>
-              포스터 생성{" "}
-              <Icon
-                name="arrow_forward"
-                color="var(--color-white)"
-                weight={900}
-                size={32}
-              />
-            </CreatePosterButton>
-          )}
+          <CreatePosterButton
+            onClick={handleCreatePoster}
+            disabled={!storeInfo || !industry || !imageFile}
+          >
+            포스터 생성{" "}
+            <Icon
+              name="arrow_forward"
+              color="var(--color-white)"
+              weight={900}
+              size={32}
+            />
+          </CreatePosterButton>
         </ImageWrapper>
       </Stack>
     </GridRoot>
@@ -409,6 +412,11 @@ const CreatePosterButton = styled(Button)({
   display: "flex",
   alignItems: "center",
   gap: 8,
+});
+
+const RequiredSpan = styled.span({
+  color: "var(--color-red)",
+  marginLeft: 4,
 });
 
 export default Home;

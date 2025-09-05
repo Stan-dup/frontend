@@ -1,42 +1,54 @@
-import { getImageDimensions } from "@/utils/image_tool";
+import { fetchInstance } from "@/utils/axios_instance";
+import { base64ToFile, getFileImageDimensions } from "@/utils/image_tool";
+import { posterSetting } from "@/utils/storage";
 
 export const fetchGeneratedPosterInfo = async (
   setResult: (result?: GeneratedPosterInfo) => void
 ) => {
   // TODO: storage에서 가져와서 생성 요청
-  const result = {
-    img: "https://d2afncas1tel3t.cloudfront.net/wp-content/uploads/%EC%A0%95%ED%86%B5%EC%97%90%EA%B7%B8%ED%83%80%EB%A5%B4%ED%8A%B8_%EC%8D%B8%EB%84%A4%EC%9D%BC1.jpg",
-    textFeature: [
-      {
-        fontFamily: "cursive",
-        fontSize: 50,
-        textContent: "Sample Text 1",
-        position: {
-          xMin: 200.0,
-          yMin: 1000.0,
-          xMax: 0.0,
-          yMax: 0.0,
-        },
-      },
-      {
-        fontFamily: "sans-serif",
-        fontSize: 32,
-        textContent: "Sample Text 1",
-        position: {
-          xMin: 0.0,
-          yMin: 0.0,
-          xMax: 0.0,
-          yMax: 0.0,
-        },
-      },
-    ],
-  };
-  const { width, height } = await getImageDimensions(result.img);
-  const resizeRatio = Math.min(1100 / width, 615 / height);
-  setTimeout(() => setResult({ ...result, width, height, resizeRatio }), 1000);
+  const request = posterSetting.get();
+  if (!request || !request.base64) return;
+  const formData = new FormData();
+  formData.append("img", base64ToFile(request.base64, "upload_image.png"));
+  formData.append(
+    "request",
+    new Blob(
+      [
+        JSON.stringify({
+          purpose: request.purpose,
+          facilityType: request.facilityType,
+          prompt: request.prompt || "",
+          mainColor: request.mainColor || "",
+          mood: request.mood || "",
+          size: request.size,
+          startDate: request.startDate,
+          endDate: request.endDate,
+          storeInfo: request.storeInfo,
+        }),
+      ],
+      { type: "application/json" }
+    )
+  );
+
+  fetchInstance({ headers: { "Content-Type": "multipart/form-data" } })
+    .post("/proxy", formData)
+    .then(async (response) => {
+      const _result: _GeneratedPosterInfo = response.data;
+      const result = {
+        ..._result,
+        img: base64ToFile(_result.img, "result_image.png"),
+      };
+      const { width, height } = await getFileImageDimensions(result.img);
+      const resizeRatio = Math.min(1100 / width, 615 / height);
+      setResult({ ...result, width, height, resizeRatio });
+    })
+    .catch((error) => {
+      console.error("Error fetching generated poster info:", error);
+      setResult(undefined);
+    });
 };
 
-export type GeneratedPosterInfo = {
+type _GeneratedPosterInfo = {
   img: string;
   width: number;
   height: number;
@@ -44,6 +56,26 @@ export type GeneratedPosterInfo = {
   textFeature: {
     fontFamily: string;
     fontSize: number;
+    color: string;
+    textContent: string;
+    position: {
+      xMin: number;
+      yMin: number;
+      xMax: number;
+      yMax: number;
+    };
+  }[];
+};
+
+export type GeneratedPosterInfo = {
+  img: File;
+  width: number;
+  height: number;
+  resizeRatio: number;
+  textFeature: {
+    fontFamily: string;
+    fontSize: number;
+    color: string;
     textContent: string;
     position: {
       xMin: number;

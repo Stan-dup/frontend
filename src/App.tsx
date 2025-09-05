@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import NotFound from "./pages/not_found";
 import { RouterPath } from "./utils/path";
 import PosterMaker from "./pages/poster-maker";
+import Test from "./pages/index";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: RouterPath.posterMaker.path,
         element: <PosterMaker />,
+      },
+      {
+        path: RouterPath.gallery.path,
+        element: <Test />,
       },
       {
         path: RouterPath.notFound.path,
