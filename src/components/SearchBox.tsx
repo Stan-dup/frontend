@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { Input } from "./Input";
 import { fetchInstance } from "@/utils/axios_instance";
@@ -10,6 +10,7 @@ type SearchBoxProps<T extends Record<string, unknown>> = {
   mockData?: T[];
   displayKey: string;
   searchUrl: string;
+  isRequired?: boolean;
   onSelected: (selected: T) => void;
   selected: T | null;
 };
@@ -26,10 +27,12 @@ const loadResult = <T,>(
     setTimeout(() => {
       setResult(mockData);
     }, 3000);
+    return;
   }
-  return;
   fetchInstance()
-    .get(`${searchUrl}?q=${query}`)
+    .post(searchUrl, {
+      storeName: query,
+    })
     .then((response) => {
       setResult(response.data);
     })
@@ -41,6 +44,7 @@ const loadResult = <T,>(
 export const SearchBox = <T extends Record<string, unknown>>({
   placeholder,
   label,
+  isRequired,
   searchUrl,
   mockData,
   displayKey,
@@ -49,6 +53,7 @@ export const SearchBox = <T extends Record<string, unknown>>({
 }: SearchBoxProps<T>) => {
   const [query, setQuery] = useState<string>("");
   const [results, setResults] = useState<T[]>([]);
+  const debounceRef = useRef<number | null>(null);
 
   const handleSelected = (selected: T) => {
     setResults([]);
@@ -56,29 +61,43 @@ export const SearchBox = <T extends Record<string, unknown>>({
     onSelected(selected);
   };
 
+  // debounce 적용
+  useEffect(() => {
+    if (query === "") return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      loadResult(query, searchUrl, setResults, mockData);
+    }, 600);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [mockData, query, searchUrl]);
+
   return (
     <div>
       <Input
         label={label}
+        isRequired={isRequired}
         placeholder={selected ? String(selected[displayKey]) : placeholder}
         onChange={(e) => {
           setQuery(e.target.value);
-          loadResult(e.target.value, searchUrl, setResults, mockData);
         }}
         value={query}
         icon="search"
       />
       {results.length != 0 ? (
-        <ResultWrapper>
-          {...results.map((result) => (
-            <Result
-              key={String(result[displayKey])}
-              onClick={() => handleSelected(result)}
-            >
-              {String(result[displayKey])}
-            </Result>
-          ))}
-        </ResultWrapper>
+        <ResultWrapper2>
+          <ResultWrapper>
+            {...results.map((result) => (
+              <Result
+                key={String(result[displayKey])}
+                onClick={() => handleSelected(result)}
+              >
+                {String(result[displayKey])}
+              </Result>
+            ))}
+          </ResultWrapper>
+        </ResultWrapper2>
       ) : (
         <></>
       )}
@@ -88,6 +107,10 @@ export const SearchBox = <T extends Record<string, unknown>>({
     </div>
   );
 };
+
+const ResultWrapper2 = styled.div({
+  position: "relative",
+});
 
 const ResultWrapper = styled.div({
   display: "flex",
@@ -102,7 +125,6 @@ const ResultWrapper = styled.div({
   width: "100%",
   maxHeight: 200,
   overflowY: "auto",
-  top: 48,
 });
 
 const Result = styled.button({

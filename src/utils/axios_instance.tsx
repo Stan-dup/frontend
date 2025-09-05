@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 
 const initInstance = (config: AxiosRequestConfig) => {
   const instance = axios.create({
-    timeout: 5000,
+    // timeout: 10000,
     ...config,
     headers: {
       Accept: "application/json",
@@ -14,7 +14,7 @@ const initInstance = (config: AxiosRequestConfig) => {
   return instance;
 };
 
-export const BASE_URL = "";
+export const BASE_URL = "http://stan-dup.duckdns.org:8008/stand-up";
 /**
  * @param config 추가 헤더 config
  * @returns

@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
+  isRequired?: boolean;
   children: React.ReactNode;
 }
 
@@ -10,12 +11,18 @@ export const Select: React.FC<SelectProps> = ({
   label,
   id,
   children,
+  isRequired,
   className,
   ...props
 }) => {
   return (
     <Wrapper>
-      {label && <Label htmlFor={id}>{label}</Label>}
+      {label && (
+        <Label htmlFor={id}>
+          {label}
+          {isRequired && <RequiredSpan> * 필수</RequiredSpan>}
+        </Label>
+      )}
       <Border>
         <StyledSelect id={id} className={className} {...props}>
           {children}
@@ -50,4 +57,9 @@ const StyledSelect = styled.select({
     boxShadow: "0 0 0 3px rgba(137,160,107,0.12)",
     borderColor: "var(--color-main)",
   },
+});
+
+const RequiredSpan = styled.span({
+  color: "var(--color-red)",
+  marginLeft: 4,
 });

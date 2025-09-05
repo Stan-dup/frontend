@@ -9,7 +9,18 @@ export const fetchGeneratedPosterInfo = async (
     textFeature: [
       {
         fontFamily: "cursive",
-        fontSize: 15,
+        fontSize: 50,
+        textContent: "Sample Text 1",
+        position: {
+          xMin: 200.0,
+          yMin: 1000.0,
+          xMax: 0.0,
+          yMax: 0.0,
+        },
+      },
+      {
+        fontFamily: "sans-serif",
+        fontSize: 32,
         textContent: "Sample Text 1",
         position: {
           xMin: 0.0,

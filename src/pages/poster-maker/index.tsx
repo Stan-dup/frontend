@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import EditableText from "@/pages/poster-maker/EditableText";
 import Konva from "konva";
 import styled from "@emotion/styled";
@@ -8,6 +8,7 @@ import { fetchGeneratedPosterInfo, GeneratedPosterInfo } from "./api";
 import { Loading } from "@/components/Loading";
 import { Card, CardTitle, CardHeader } from "@/components/Card";
 import { Button } from "@/components/Button";
+import { EditableImage as URLImage } from "./EditableImage";
 
 type Item =
   | {
@@ -168,7 +169,22 @@ const PosterMaker = () => {
 
   useEffect(() => {
     fetchGeneratedPosterInfo((result) => {
+      if (!result) return;
       setGeneratedPosterInfo(result);
+      result.textFeature.map((tf) =>
+        setItems((prev) => [
+          ...prev,
+          {
+            id: "text-" + Date.now() + Math.random(),
+            type: "text" as const,
+            x: tf.position.xMin * result.resizeRatio,
+            y: tf.position.yMin * result.resizeRatio,
+            textContent: tf.textContent,
+            fontSize: tf.fontSize * result.resizeRatio,
+            fontFamily: tf.fontFamily,
+          },
+        ])
+      );
     });
   }, []);
 
@@ -276,7 +292,7 @@ const PosterMaker = () => {
                 (window.innerWidth -
                   generatedPosterInfo.width * generatedPosterInfo.resizeRatio) /
                   2 -
-                10,
+                210,
               top:
                 editingPos.y +
                 (window.innerHeight -
@@ -303,62 +319,6 @@ const PosterMaker = () => {
         )}
       </CanvasWrapper>
     </Wrapper>
-  );
-};
-
-// 이미지 컴포넌트 (URL to Image)
-const URLImage: React.FC<{
-  item: Extract<Item, { type: "image" }>;
-  isSelected: boolean;
-  onSelect: () => void;
-  onDrag: (id: string, x: number, y: number) => void;
-  onTransform: (id: string, node: Konva.Image) => void;
-  trRef: React.RefObject<Konva.Transformer>;
-}> = ({ item, isSelected, onSelect, onDrag, onTransform, trRef }) => {
-  const shapeRef = useRef<Konva.Image | null>(null);
-  const [img, setImg] = useState<HTMLImageElement>();
-
-  React.useEffect(() => {
-    const image = new window.Image();
-    image.src = item.src;
-    image.onload = () => setImg(image);
-  }, [item.src]);
-
-  React.useEffect(() => {
-    if (isSelected && trRef.current && shapeRef.current) {
-      trRef.current.nodes([shapeRef.current]);
-      trRef.current.getLayer()?.batchDraw();
-    }
-  }, [isSelected, trRef]);
-
-  return (
-    <>
-      <KonvaImage
-        image={img}
-        x={item.x}
-        y={item.y}
-        width={item.width}
-        height={item.height}
-        draggable
-        onClick={onSelect}
-        onTap={onSelect}
-        ref={shapeRef}
-        onDragEnd={(e) => onDrag(item.id, e.target.x(), e.target.y())}
-        onTransformEnd={(e) => onTransform(item.id, e.target as Konva.Image)}
-        stroke={isSelected ? "#1976d2" : undefined}
-        strokeWidth={isSelected ? 2 : 0}
-      />
-      {isSelected && (
-        <Transformer
-          ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            // 최소 크기 제한
-            if (newBox.width < 20 || newBox.height < 20) return oldBox;
-            return newBox;
-          }}
-        />
-      )}
-    </>
   );
 };
 

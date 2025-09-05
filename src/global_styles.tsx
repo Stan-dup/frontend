@@ -66,6 +66,7 @@ export default function GlobalStyles() {
           --color-gray: #aaa;
           --color-gray2: #ddd;
           --color-black: #2c2c2c;
+          --color-red: #d24833ff;
           --font-size-exLarge: 36px;
           --font-size-large: 24px;
           --font-size-base: 15px;

@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   icon?: string;
+  isRequired?: boolean;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -12,13 +13,19 @@ export const Input: React.FC<InputProps> = ({
   id,
   value,
   icon,
+  isRequired = false,
   placeholder,
   onChange,
   ...props
 }) => {
   return (
     <Wrapper>
-      {label && <Label htmlFor={id}>{label}</Label>}
+      {(label || isRequired) && (
+        <Label htmlFor={id}>
+          {label}
+          <RequiredSpan>{isRequired && " *필수"}</RequiredSpan>
+        </Label>
+      )}
       <InputWrapper>
         <StyledInput
           id={id}
@@ -71,4 +78,9 @@ const IconWrapper = styled.div({
   position: "absolute",
   right: 5,
   top: "calc(50% - 14px)",
+});
+
+const RequiredSpan = styled.span({
+  color: "var(--color-red)",
+  marginLeft: 4,
 });
