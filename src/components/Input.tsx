@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import Icon from "./Icon";
+import Icon from "./Icon_my";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;

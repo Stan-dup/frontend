@@ -11,7 +11,7 @@ import {
 import { Select } from "../../components/Select";
 import { Textarea } from "../../components/Textarea";
 import styled from "@emotion/styled";
-import Icon from "../../components/Icon";
+import Icon from "../../components/Icon_my";
 import LogoImage from "../../assets/logo.png";
 import { SearchBox } from "../../components/SearchBox";
 import { Input } from "../../components/Input";
