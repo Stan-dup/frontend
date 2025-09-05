@@ -6,6 +6,8 @@ import styled from "@emotion/styled";
 
 import { fetchGeneratedPosterInfo, GeneratedPosterInfo } from "./api";
 import { Loading } from "@/components/Loading";
+import { Card, CardTitle, CardHeader } from "@/components/Card";
+import { Button } from "@/components/Button";
 
 type Item =
   | {
@@ -36,6 +38,7 @@ const defaultText = {
   y: 50,
   textContent: "더블클릭하여 편집",
   fontSize: 32,
+  fontFamily: "sans-serif",
 };
 
 const defaultImage = {
@@ -53,11 +56,11 @@ const PosterMaker = () => {
   const [generatedPosterInfo, setGeneratedPosterInfo] =
     useState<GeneratedPosterInfo>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [editingText, setEditingText] = useState("");
   const [editingPos, setEditingPos] = useState<{
     x: number;
     y: number;
     fontSize: number;
+    textContent: string;
     id: string;
   } | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null);
@@ -113,26 +116,25 @@ const PosterMaker = () => {
   // 텍스트 더블클릭 편집
   const handleTextDblClick = (item: Item) => {
     if (item.type !== "text") return;
-    setEditingText(item.textContent);
     setEditingPos({
       x: item.x,
       y: item.y,
       fontSize: item.fontSize,
+      textContent: item.textContent,
       id: item.id,
     });
     setSelectedId(item.id);
   };
 
   // 텍스트 편집 완료
-  const handleTextEdit = (id: string) => {
+  const handleTextEdit = (id: string, value: string) => {
     setItems((prev) =>
       prev.map((item) =>
         item.id === id && item.type === "text"
-          ? { ...item, text: editingText }
+          ? { ...item, textContent: value }
           : item
       )
     );
-    setEditingText("");
     setEditingPos(null);
   };
 
@@ -175,66 +177,51 @@ const PosterMaker = () => {
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: 8 }}>
-        <button onClick={handleAddText}>텍스트 추가</button>
-        <input type="file" accept="image/*" onChange={handleImageUpload} />
-        {/* 텍스트 선택 시 스타일 컨트롤러 */}
-        {selectedId &&
-          (() => {
-            const selected = items.find(
-              (i): i is Extract<Item, { type: "text" }> =>
-                i.id === selectedId && i.type === "text"
-            );
-            if (!selected) return null;
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  gap: 8,
-                  alignItems: "center",
-                  background: "#f7f7fa",
-                  borderRadius: 8,
-                  padding: "4px 12px",
-                }}
-              >
-                <label
-                  style={{ display: "flex", alignItems: "center", gap: 4 }}
-                >
-                  <span style={{ fontSize: 14 }}>색상</span>
-                  <input
-                    type="color"
-                    value={selected.color || "#222222"}
-                    onChange={(e) =>
-                      handleTextStyleChange("color", e.target.value)
-                    }
-                    style={{
-                      width: 28,
-                      height: 28,
-                      border: "none",
-                      background: "none",
-                    }}
-                  />
-                </label>
-                <label
-                  style={{ display: "flex", alignItems: "center", gap: 4 }}
-                >
-                  <span style={{ fontSize: 14 }}>크기</span>
-                  <input
-                    type="number"
-                    min={8}
-                    max={120}
-                    value={selected.fontSize}
-                    onChange={(e) =>
-                      handleTextStyleChange("fontSize", Number(e.target.value))
-                    }
-                    style={{ width: 48 }}
-                  />
-                </label>
-              </div>
-            );
-          })()}
-      </div>
+    <Wrapper>
+      <Card>
+        <Stack gap={24}>
+          <CardHeader>
+            <CardTitle>편집창</CardTitle>
+          </CardHeader>
+          <Stack gap={10}>
+            <BoldText>요소 추가</BoldText>
+            <Button onClick={handleAddText} variant="secondary">
+              텍스트 추가
+            </Button>
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
+          </Stack>
+          {selectedId &&
+            (() => {
+              const selected = items.find(
+                (i): i is Extract<Item, { type: "text" }> =>
+                  i.id === selectedId && i.type === "text"
+              );
+              if (!selected) return null;
+              return (
+                <div>
+                  <label
+                    style={{ display: "flex", alignItems: "center", gap: 4 }}
+                  >
+                    <span style={{ fontSize: 14 }}>텍스트 색상</span>
+                    <input
+                      type="color"
+                      value={selected.color || "#222222"}
+                      onChange={(e) =>
+                        handleTextStyleChange("color", e.target.value)
+                      }
+                      style={{
+                        width: 28,
+                        height: 28,
+                        border: "none",
+                        background: "none",
+                      }}
+                    />
+                  </label>
+                </div>
+              );
+            })()}
+        </Stack>
+      </Card>
       <CanvasWrapper>
         <BackgroundImage
           src={generatedPosterInfo.img}
@@ -302,17 +289,20 @@ const PosterMaker = () => {
               width: 250,
               zIndex: 10,
             }}
-            value={editingText}
+            value={editingPos.textContent}
             autoFocus
-            onChange={(e) => setEditingText(e.target.value)}
-            onBlur={() => handleTextEdit(editingPos.id)}
+            onChange={(e) =>
+              setEditingPos({ ...editingPos, textContent: e.target.value })
+            }
+            onBlur={() => handleTextEdit(editingPos.id, editingPos.textContent)}
             onKeyDown={(e) =>
-              e.key === "Enter" && handleTextEdit(editingPos.id)
+              e.key === "Enter" &&
+              handleTextEdit(editingPos.id, editingPos.textContent)
             }
           />
         )}
       </CanvasWrapper>
-    </div>
+    </Wrapper>
   );
 };
 
@@ -372,6 +362,12 @@ const URLImage: React.FC<{
   );
 };
 
+const Wrapper = styled.div({
+  display: "grid",
+  gridTemplateColumns: "200px auto",
+  boxSizing: "border-box",
+  paddingLeft: 10,
+});
 const CanvasWrapper = styled.div({
   width: "100%",
   height: "calc(100vh - 87px)",
@@ -386,6 +382,15 @@ const BackgroundImage = styled.img({
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
+});
+const Stack = styled.div<{ gap?: number }>(({ gap = 12 }) => ({
+  display: "flex",
+  alignContent: "stretch",
+  flexDirection: "column",
+  gap,
+}));
+const BoldText = styled.h3({
+  fontWeight: "bold",
 });
 
 export default PosterMaker;

@@ -22,7 +22,6 @@ export const fetchGeneratedPosterInfo = async (
   };
   const { width, height } = await getImageDimensions(result.img);
   const resizeRatio = Math.min(1100 / width, 615 / height);
-  console.log(width, height, resizeRatio);
   setTimeout(() => setResult({ ...result, width, height, resizeRatio }), 1000);
 };
 

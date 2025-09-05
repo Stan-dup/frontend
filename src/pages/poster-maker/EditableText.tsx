@@ -51,6 +51,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   }, [isSelected]);
 
+  console.log(item);
   if (item.type !== "text") return <></>;
 
   return (
@@ -61,7 +62,7 @@ const EditableText: React.FC<EditableTextProps> = ({
         x={item.x}
         y={item.y}
         fontSize={item.fontSize}
-        fontFamily={item.fontFamily || "inherit"}
+        fontFamily={item.fontFamily || "sans-serif"}
         fill={item.color || "#222"}
         draggable
         onClick={onSelect}
@@ -73,7 +74,6 @@ const EditableText: React.FC<EditableTextProps> = ({
             ? (e) => onTransform(item.id, e.target as Konva.Text)
             : undefined
         }
-        stroke={isSelected ? "#1976d2" : undefined}
       />
       {isSelected && (
         <Transformer

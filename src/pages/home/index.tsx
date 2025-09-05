@@ -61,7 +61,6 @@ export const Home = () => {
   const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
   const [industry, setIndustry] = useState("");
   const [sizePreset, setSizePreset] = useState<SizePreset | "">("instagram");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -124,7 +123,6 @@ export const Home = () => {
               label="업종"
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
-              disabled={isLoading}
             >
               {INDUSTRY_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>
@@ -137,7 +135,6 @@ export const Home = () => {
               label="크기"
               value={sizePreset}
               onChange={(e) => setSizePreset(e.target.value as SizePreset)}
-              disabled={isLoading}
             >
               {SIZE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -151,7 +148,6 @@ export const Home = () => {
               placeholder="예: 맛있는 피자를 팔고있는 피자집,[가게 이름]브릭스피자"
               value={promptText}
               onChange={(e) => setPromptText(e.target.value)}
-              disabled={isLoading}
             />
             <div>
               <UploadLabel>이미지 업로드 (선택 사항)</UploadLabel>
