@@ -1,12 +1,11 @@
-import React, { useRef, useState } from "react";
-import {
-  Stage,
-  Layer,
-  Text,
-  Image as KonvaImage,
-  Transformer,
-} from "react-konva";
+import React, { useRef, useState, useEffect } from "react";
+import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
+import EditableText from "@/pages/poster-maker/EditableText";
 import Konva from "konva";
+import styled from "@emotion/styled";
+
+import { fetchGeneratedPosterInfo, GeneratedPosterInfo } from "./api";
+import { Loading } from "@/components/Loading";
 
 type Item =
   | {
@@ -14,8 +13,10 @@ type Item =
       type: "text";
       x: number;
       y: number;
-      text: string;
+      textContent: string;
       fontSize: number;
+      fontFamily?: string;
+      color?: string;
       isEditing?: boolean;
     }
   | {
@@ -33,7 +34,7 @@ const defaultText = {
   type: "text" as const,
   x: 50,
   y: 50,
-  text: "더블클릭하여 편집",
+  textContent: "더블클릭하여 편집",
   fontSize: 32,
 };
 
@@ -47,8 +48,10 @@ const defaultImage = {
   src: "",
 };
 
-const PosterMaker: React.FC = () => {
+const PosterMaker = () => {
   const [items, setItems] = useState<Item[]>([]);
+  const [generatedPosterInfo, setGeneratedPosterInfo] =
+    useState<GeneratedPosterInfo>();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [editingPos, setEditingPos] = useState<{
@@ -60,7 +63,6 @@ const PosterMaker: React.FC = () => {
   const stageRef = useRef<Konva.Stage | null>(null);
   const trRef = useRef<Konva.Transformer | null>(null);
 
-  // 이미지 업로드 핸들러
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -86,6 +88,21 @@ const PosterMaker: React.FC = () => {
   // 선택 핸들러
   const handleSelect = (id: string) => setSelectedId(id);
 
+  // 텍스트 속성 변경 핸들러
+  const handleTextStyleChange = (
+    key: "color" | "fontSize",
+    value: string | number
+  ) => {
+    if (!selectedId) return;
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === selectedId && item.type === "text"
+          ? { ...item, [key]: value }
+          : item
+      )
+    );
+  };
+
   // 드래그/변형 핸들러
   const handleDrag = (id: string, x: number, y: number) => {
     setItems((prev) =>
@@ -96,7 +113,7 @@ const PosterMaker: React.FC = () => {
   // 텍스트 더블클릭 편집
   const handleTextDblClick = (item: Item) => {
     if (item.type !== "text") return;
-    setEditingText(item.text);
+    setEditingText(item.textContent);
     setEditingPos({
       x: item.x,
       y: item.y,
@@ -147,75 +164,154 @@ const PosterMaker: React.FC = () => {
     node.scaleY(1);
   };
 
+  useEffect(() => {
+    fetchGeneratedPosterInfo((result) => {
+      setGeneratedPosterInfo(result);
+    });
+  }, []);
+
+  if (generatedPosterInfo === undefined) {
+    return <Loading />;
+  }
+
   return (
-    <div style={{ width: "100vw", height: "100vh", background: "#f5f5f5" }}>
+    <div>
       <div style={{ marginBottom: 8 }}>
         <button onClick={handleAddText}>텍스트 추가</button>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
+        {/* 텍스트 선택 시 스타일 컨트롤러 */}
+        {selectedId &&
+          (() => {
+            const selected = items.find(
+              (i): i is Extract<Item, { type: "text" }> =>
+                i.id === selectedId && i.type === "text"
+            );
+            if (!selected) return null;
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
+                  background: "#f7f7fa",
+                  borderRadius: 8,
+                  padding: "4px 12px",
+                }}
+              >
+                <label
+                  style={{ display: "flex", alignItems: "center", gap: 4 }}
+                >
+                  <span style={{ fontSize: 14 }}>색상</span>
+                  <input
+                    type="color"
+                    value={selected.color || "#222222"}
+                    onChange={(e) =>
+                      handleTextStyleChange("color", e.target.value)
+                    }
+                    style={{
+                      width: 28,
+                      height: 28,
+                      border: "none",
+                      background: "none",
+                    }}
+                  />
+                </label>
+                <label
+                  style={{ display: "flex", alignItems: "center", gap: 4 }}
+                >
+                  <span style={{ fontSize: 14 }}>크기</span>
+                  <input
+                    type="number"
+                    min={8}
+                    max={120}
+                    value={selected.fontSize}
+                    onChange={(e) =>
+                      handleTextStyleChange("fontSize", Number(e.target.value))
+                    }
+                    style={{ width: 48 }}
+                  />
+                </label>
+              </div>
+            );
+          })()}
       </div>
-      <Stage
-        width={window.innerWidth}
-        height={window.innerHeight - 40}
-        ref={stageRef}
-        style={{ background: "#fff" }}
-      >
-        <Layer>
-          {items.map((item) => {
-            if (item.type === "text") {
-              return (
-                <Text
-                  key={item.id}
-                  text={item.text}
-                  x={item.x}
-                  y={item.y}
-                  fontSize={item.fontSize}
-                  draggable
-                  onClick={() => handleSelect(item.id)}
-                  onTap={() => handleSelect(item.id)}
-                  onDblClick={() => handleTextDblClick(item)}
-                  onDragEnd={(e) =>
-                    handleDrag(item.id, e.target.x(), e.target.y())
-                  }
-                  fill={selectedId === item.id ? "#1976d2" : "#222"}
-                />
-              );
-            }
-            if (item.type === "image") {
-              return (
-                <React.Fragment key={item.id}>
-                  <URLImage
+      <CanvasWrapper>
+        <BackgroundImage
+          src={generatedPosterInfo.img}
+          width={generatedPosterInfo.width * generatedPosterInfo.resizeRatio}
+          height={generatedPosterInfo.height * generatedPosterInfo.resizeRatio}
+        />
+        <Stage
+          width={generatedPosterInfo.width * generatedPosterInfo.resizeRatio}
+          height={generatedPosterInfo.height * generatedPosterInfo.resizeRatio}
+          ref={stageRef}
+          style={{ background: "#fff" }}
+        >
+          <Layer>
+            {items.map((item) => {
+              if (item.type === "text") {
+                return (
+                  <EditableText
+                    key={item.id}
                     item={item}
                     isSelected={selectedId === item.id}
                     onSelect={() => handleSelect(item.id)}
                     onDrag={handleDrag}
-                    onTransform={handleTransform}
-                    trRef={trRef}
+                    onDblClick={handleTextDblClick}
                   />
-                </React.Fragment>
-              );
+                );
+              }
+              if (item.type === "image") {
+                return (
+                  <React.Fragment key={item.id}>
+                    <URLImage
+                      item={item}
+                      isSelected={selectedId === item.id}
+                      onSelect={() => handleSelect(item.id)}
+                      onDrag={handleDrag}
+                      onTransform={handleTransform}
+                      trRef={trRef}
+                    />
+                  </React.Fragment>
+                );
+              }
+              return null;
+            })}
+          </Layer>
+        </Stage>
+        {/* 텍스트 편집용 input 포탈 */}
+        {editingPos && (
+          <input
+            style={{
+              position: "absolute",
+              left:
+                editingPos.x +
+                (window.innerWidth -
+                  generatedPosterInfo.width * generatedPosterInfo.resizeRatio) /
+                  2 -
+                10,
+              top:
+                editingPos.y +
+                (window.innerHeight -
+                  87 -
+                  generatedPosterInfo.height *
+                    generatedPosterInfo.resizeRatio) /
+                  2 -
+                10, // stage 상단 여백 보정
+              fontSize: editingPos.fontSize,
+              width: 250,
+              zIndex: 10,
+            }}
+            value={editingText}
+            autoFocus
+            onChange={(e) => setEditingText(e.target.value)}
+            onBlur={() => handleTextEdit(editingPos.id)}
+            onKeyDown={(e) =>
+              e.key === "Enter" && handleTextEdit(editingPos.id)
             }
-            return null;
-          })}
-        </Layer>
-      </Stage>
-      {/* 텍스트 편집용 input 포탈 */}
-      {editingPos && (
-        <input
-          style={{
-            position: "absolute",
-            left: editingPos.x,
-            top: editingPos.y + 40, // stage 상단 여백 보정
-            fontSize: editingPos.fontSize,
-            width: 250,
-            zIndex: 10,
-          }}
-          value={editingText}
-          autoFocus
-          onChange={(e) => setEditingText(e.target.value)}
-          onBlur={() => handleTextEdit(editingPos.id)}
-          onKeyDown={(e) => e.key === "Enter" && handleTextEdit(editingPos.id)}
-        />
-      )}
+          />
+        )}
+      </CanvasWrapper>
     </div>
   );
 };
@@ -275,5 +371,21 @@ const URLImage: React.FC<{
     </>
   );
 };
+
+const CanvasWrapper = styled.div({
+  width: "100%",
+  height: "calc(100vh - 87px)",
+  background: "var(--color-background)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+});
+const BackgroundImage = styled.img({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+});
 
 export default PosterMaker;

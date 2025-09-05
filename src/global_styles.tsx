@@ -30,25 +30,9 @@ export default function GlobalStyles() {
 
         @font-face {
           font-family: "Pretendard";
-          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
-            format("woff");
-          font-weight: 400;
-          font-display: swap;
-        }
-
-        @font-face {
-          font-family: "Pretendard";
           src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff")
             format("woff");
           font-weight: 500;
-          font-display: swap;
-        }
-
-        @font-face {
-          font-family: "Pretendard";
-          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff")
-            format("woff");
-          font-weight: 600;
           font-display: swap;
         }
 
@@ -94,7 +78,7 @@ export default function GlobalStyles() {
           }
         }
         * {
-          font-family: "Pretendard", -apple-system, BlinkMacSystemFont;
+          font-family: "inherit";
         }
         p,
         li {
@@ -107,6 +91,7 @@ export default function GlobalStyles() {
           cursor: pointer;
         }
         body {
+          font-family: "Pretendard", -apple-system, BlinkMacSystemFont;
           color: var(--color-black);
           background: var(--color-background);
         }
