@@ -1,8 +1,20 @@
 interface StorageKey {
   posterSetting?: {
-    width: number;
-    height: number;
-    backgroundColor: string;
+    purpose: string;
+    facilityType: string;
+    prompt: string;
+    mainColor: string;
+    mood: string;
+    size: string;
+    startDate: string; // ex) "2025-09-05-13:00"
+    endDate: string; // ex) "2025-09-06-09:00"
+    base64: string;
+    mimeType: string;
+    storeInfo: {
+      phone: string;
+      address: string;
+      name: string;
+    };
   };
 }
 

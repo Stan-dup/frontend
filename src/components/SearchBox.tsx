@@ -12,7 +12,7 @@ type SearchBoxProps<T extends Record<string, unknown>> = {
   searchUrl: string;
   isRequired?: boolean;
   onSelected: (selected: T) => void;
-  selected: T | null;
+  selected?: T;
 };
 
 const loadResult = <T,>(

@@ -12,7 +12,9 @@ const Layout = () => {
     <>
       <Root>
         <Inner>
-          <Logo>스탠드업</Logo>
+          <button onClick={() => navigate(RouterPath.home.path)}>
+            <Logo>스탠드업</Logo>
+          </button>
           <Nav>
             <Button
               variant={

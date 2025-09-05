@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
@@ -9,11 +10,13 @@ import Icon from "@/components/Icon";
 import LogoImage from "@/assets/logo.png";
 import { SearchBox } from "@/components/SearchBox";
 import { Input } from "@/components/Input";
+import { posterSetting } from "@/utils/storage";
+import { fileToBase64 } from "@/utils/image_tool";
 
 type StoreInfo = {
   phone: string;
   address: string;
-  nmae: string;
+  name: string;
 };
 
 type SizePreset = "instagram" | "facebook" | "custom";
@@ -70,7 +73,7 @@ const MOOD = [
 
 export const Home = () => {
   const [promptText, setPromptText] = useState("");
-  const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
+  const [storeInfo, setStoreInfo] = useState<StoreInfo>();
   const [industry, setIndustry] = useState("");
   const [purpose, setPurpose] = useState("");
   const [sizePreset, setSizePreset] = useState<SizePreset | "">("instagram");
@@ -78,8 +81,10 @@ export const Home = () => {
   const [endDate, setEndDate] = useState("");
   const [mainColor, setMainColor] = useState("#1976d2");
   const [mood, setMood] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,13 +104,39 @@ export const Home = () => {
   };
 
   const handleRemoveImage = () => {
-    setImageFile(null);
+    setImageFile(undefined);
     setImagePreview(null);
     // reset file input
     const fileInput = document.getElementById(
       "image-upload"
     ) as HTMLInputElement;
     if (fileInput) fileInput.value = "";
+  };
+
+  const handleCreatePoster = async () => {
+    if (!storeInfo || !industry) {
+      alert("해킹하지 마세요ㅜㅜ");
+      return;
+    }
+
+    const changedImage = await fileToBase64(imageFile!)
+      .then((res) => res)
+      .catch(() => null);
+
+    posterSetting.set({
+      purpose,
+      facilityType: industry,
+      prompt: promptText,
+      mainColor,
+      mood,
+      size: sizePreset,
+      startDate,
+      endDate,
+      base64: changedImage ? changedImage.base64 : "",
+      mimeType: changedImage ? changedImage.mimeType : "",
+      storeInfo: storeInfo,
+    });
+    navigate("/poster-maker");
   };
 
   return (
@@ -286,7 +317,7 @@ export const Home = () => {
             style={{ maxWidth: "60%", height: "auto" }}
           />
           {storeInfo && industry && (
-            <CreatePosterButton>
+            <CreatePosterButton onClick={handleCreatePoster}>
               포스터 생성{" "}
               <Icon
                 name="arrow_forward"
