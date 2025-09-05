@@ -5,9 +5,9 @@ export default function GlobalStyles() {
     <Global
       styles={css`
         :root {
-          --color-main: #89a06b;
-          --color-side: rgba(0, 66, 47, 43);
-          --color-background: #f7ffef;
+          --color-main: #2173a2;
+          --color-side: #57b6d4;
+          --color-background: #f0f0ec;
           --color-gray: #aaa;
           --color-gray2: #ddd;
           --color-black: #2c2c2c;

@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import Home from "./pages/home";
-import SomePage from "./pages/some_page";
 import NotFound from "./pages/not_found";
 import { RouterPath } from "./utils/path";
 
@@ -15,10 +14,6 @@ const router = createBrowserRouter([
       {
         path: RouterPath.home.path,
         element: <Home />,
-      },
-      {
-        path: RouterPath.somePage.path,
-        element: <SomePage />,
       },
       {
         path: RouterPath.notFound.path,
