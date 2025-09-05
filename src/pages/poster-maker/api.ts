@@ -5,7 +5,6 @@ import { posterSetting } from "@/utils/storage";
 export const fetchGeneratedPosterInfo = async (
   setResult: (result?: GeneratedPosterInfo) => void
 ) => {
-  // TODO: storage에서 가져와서 생성 요청
   const request = posterSetting.get();
   if (!request || !request.base64) return;
   const formData = new FormData();

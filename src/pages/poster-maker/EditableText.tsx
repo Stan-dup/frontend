@@ -51,7 +51,6 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   }, [isSelected]);
 
-  console.log(item);
   if (item.type !== "text") return <></>;
 
   return (
