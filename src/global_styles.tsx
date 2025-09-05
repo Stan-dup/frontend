@@ -34,6 +34,7 @@ export default function GlobalStyles() {
         }
         body {
           color: var(--color-black);
+          background: var(--color-background);
         }
         a {
           color: var(--color-black);
