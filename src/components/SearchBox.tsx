@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 import { Input } from "./Input";
-import { fetchInstance } from "@/utils/axios_instance";
+import { fetchInstance } from "../utils/axios_instance";
 import styled from "@emotion/styled";
 
 type SearchBoxProps<T extends Record<string, unknown>> = {

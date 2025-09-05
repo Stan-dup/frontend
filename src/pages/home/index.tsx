@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "@/components/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
-import { Select } from "@/components/Select";
-import { Textarea } from "@/components/Textarea";
+import { Button } from "../../components/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/Card";
+import { Select } from "../../components/Select";
+import { Textarea } from "../../components/Textarea";
 import styled from "@emotion/styled";
-import Icon from "@/components/Icon";
-import LogoImage from "@/assets/logo.png";
-import { SearchBox } from "@/components/SearchBox";
-import { Input } from "@/components/Input";
-import { posterSetting } from "@/utils/storage";
-import { fileToBase64 } from "@/utils/image_tool";
+import Icon from "../../components/Icon";
+import LogoImage from "../../assets/logo.png";
+import { SearchBox } from "../../components/SearchBox";
+import { Input } from "../../components/Input";
+import { posterSetting } from "../../utils/storage";
+import { fileToBase64 } from "../../utils/image_tool";
 
 type StoreInfo = {
   phone: string;

@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
-import EditableText from "@/pages/poster-maker/EditableText";
+import EditableText from "./EditableText";
 import Konva from "konva";
 import styled from "@emotion/styled";
 
 import { fetchGeneratedPosterInfo, GeneratedPosterInfo } from "./api";
-import { Loading } from "@/components/Loading";
-import { Card, CardTitle, CardHeader } from "@/components/Card";
-import { Button } from "@/components/Button";
+import { Loading } from "../../components/Loading";
+import { Card, CardTitle, CardHeader } from "../../components/Card";
+import { Button } from "../../components/Button";
 import { EditableImage as URLImage } from "./EditableImage";
 
 type Item =

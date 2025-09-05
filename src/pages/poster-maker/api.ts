@@ -1,6 +1,6 @@
-import { fetchInstance } from "@/utils/axios_instance";
-import { base64ToFile, getFileImageDimensions } from "@/utils/image_tool";
-import { posterSetting } from "@/utils/storage";
+import { fetchInstance } from "../../utils/axios_instance";
+import { base64ToFile, getFileImageDimensions } from "../../utils/image_tool";
+import { posterSetting } from "../../utils/storage";
 
 export const fetchGeneratedPosterInfo = async (
   setResult: (result?: GeneratedPosterInfo) => void
