@@ -4,6 +4,77 @@ export default function GlobalStyles() {
   return (
     <Global
       styles={css`
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Thin.woff")
+            format("woff");
+          font-weight: 100;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff")
+            format("woff");
+          font-weight: 200;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Light.woff")
+            format("woff");
+          font-weight: 300;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+            format("woff");
+          font-weight: 400;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff")
+            format("woff");
+          font-weight: 500;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff")
+            format("woff");
+          font-weight: 600;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff")
+            format("woff");
+          font-weight: 700;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraBold.woff")
+            format("woff");
+          font-weight: 800;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: "Pretendard";
+          src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Black.woff")
+            format("woff");
+          font-weight: 900;
+          font-display: swap;
+        }
         :root {
           --color-main: #2173a2;
           --color-side: #57b6d4;
@@ -21,6 +92,9 @@ export default function GlobalStyles() {
             --font-size-base: 12px;
             --font-size-small: 9px;
           }
+        }
+        * {
+          font-family: "Pretendard", -apple-system, BlinkMacSystemFont;
         }
         p,
         li {

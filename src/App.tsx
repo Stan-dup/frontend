@@ -5,6 +5,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/home";
 import NotFound from "./pages/not_found";
 import { RouterPath } from "./utils/path";
+import PosterMaker from "./pages/poster-maker";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
       {
         path: RouterPath.home.path,
         element: <Home />,
+      },
+      {
+        path: RouterPath.posterMaker.path,
+        element: <PosterMaker />,
       },
       {
         path: RouterPath.notFound.path,
