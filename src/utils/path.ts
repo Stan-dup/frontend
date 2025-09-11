@@ -18,6 +18,10 @@ export const RouterPath = {
     path: "/video",
     getPath: () => RouterPath.video.path,
   },
+  foodPotoGraphy: {
+    path: "/foodPotoGraphy",
+    getPath: () => RouterPath.foodPotoGraphy.path,
+  },
   notFound: {
     path: "*",
   },

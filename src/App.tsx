@@ -22,11 +22,15 @@ const router = createBrowserRouter([
       },
       {
         path: RouterPath.gallery.path,
-        element: <div></div>,
+        element: <div />,
       },
       {
         path: RouterPath.video.path,
-        element: <div></div>
+        element: <div />
+      },
+      {
+        path: RouterPath.foodPotoGraphy.path,
+        element: <div />
       },
       {
         path: RouterPath.notFound.path,

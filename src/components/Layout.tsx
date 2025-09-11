@@ -44,6 +44,16 @@ const Layout = () => {
             >
               동영상
             </Button>
+            <Button
+              variant={
+                location.pathname === RouterPath.foodPotoGraphy.path
+                  ? "primary"
+                  : "ghost"
+              }
+              onClick={() => navigate(RouterPath.foodPotoGraphy.path)}
+            >
+              FoodPotoGraphy
+            </Button>
           </Nav>
         </Inner>
       </Root>
@@ -77,6 +87,6 @@ const Logo = styled.h1({
   WebkitBackgroundClip: "text",
   color: "transparent",
 });
-const Nav = styled.nav({ display: "flex", alignItems: "center", gap: 8 });
+const Nav = styled.nav({ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", });
 
 export default Layout;
