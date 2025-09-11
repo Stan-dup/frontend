@@ -14,6 +14,10 @@ export const RouterPath = {
     path: "/gallery",
     getPath: () => RouterPath.gallery.path,
   },
+  video: {
+    path: "/video",
+    getPath: () => RouterPath.video.path,
+  },
   notFound: {
     path: "*",
   },

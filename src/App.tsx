@@ -25,6 +25,10 @@ const router = createBrowserRouter([
         element: <div></div>,
       },
       {
+        path: RouterPath.video.path,
+        element: <div></div>
+      },
+      {
         path: RouterPath.notFound.path,
         element: <NotFound />,
       },

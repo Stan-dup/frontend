@@ -34,6 +34,16 @@ const Layout = () => {
             >
               갤러리
             </Button>
+            <Button
+              variant={
+                location.pathname === RouterPath.video.path
+                  ? "primary"
+                  : "ghost"
+              }
+              onClick={() => navigate(RouterPath.video.path)}
+            >
+              동영상
+            </Button>
           </Nav>
         </Inner>
       </Root>
